@@ -1,5 +1,6 @@
 package com.salmansiddiqui.reminder;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.support.design.widget.FloatingActionButton;
@@ -12,11 +13,6 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Used to load the 'native-lib' library on application startup.
-    static {
-        System.loadLibrary("native-lib");
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,17 +21,20 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        //fab.setImageDrawable(R.drawable.ic_add_circle_black_48dp);
+        /*fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void addItem(View view) {
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                //        .setAction("Action", null).show();
+                Intent intent = new Intent(this, AddItemActivity.class);
+                startActivity(intent);
             }
-        });
+        });*/
 
-        // Example of a call to a native method
-        TextView tv = (TextView) findViewById(R.id.sample_text);
-        tv.setText(stringFromJNI());
+    // Example of a call to a native method
+    TextView tv = (TextView) findViewById(R.id.sample_text);
+    tv.setText(stringFromJNI());
     }
 
     @Override
@@ -65,4 +64,14 @@ public class MainActivity extends AppCompatActivity {
      * which is packaged with this application.
      */
     public native String stringFromJNI();
+
+    // Used to load the 'native-lib' library on application startup.
+    static {
+        System.loadLibrary("native-lib");
+    }
+
+    public void plusItem(View view) {
+        Intent intent = new Intent(this, AddItemActivity.class);
+        startActivity(intent);
+    }
 }
