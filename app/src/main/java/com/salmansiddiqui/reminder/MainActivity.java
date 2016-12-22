@@ -74,4 +74,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AddItemActivity.class);
         startActivity(intent);
     }
+
+    public void openSettings(MenuItem item) {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        //startActivity(intent);
+    }
 }
