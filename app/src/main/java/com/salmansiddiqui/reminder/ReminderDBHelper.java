@@ -6,10 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-/**
- * Created by Salman Siddiqui on 2016-12-21.
- */
-
 public class ReminderDBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "ReminderTasks.db";
@@ -28,11 +24,11 @@ public class ReminderDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + REMINDER_TABLE_NAME + "(" +
-                REMINDER_COLUMN_ID + " INTEGER PRIMARY KEY, " +
+                REMINDER_COLUMN_ID + " TEXT, " +
                 REMINDER_COLUMN_TASK + " TEXT, " +
                 REMINDER_COLUMN_COMPLETE + " TEXT, " +
                 REMINDER_COLUMN_REMIND + " TEXT, " +
-                REMINDER_COLUMN_TIME + " INTEGER)"
+                REMINDER_COLUMN_TIME + " TEXT)"
         );
     }
 
@@ -41,35 +37,35 @@ public class ReminderDBHelper extends SQLiteOpenHelper {
         // do nothing
     }
 
-    public boolean insertReminder(String task, boolean complete, boolean remind, int timeOfReminder) {
+    public boolean insertReminder(String task, String complete, String remind, String timeOfReminder) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(REMINDER_COLUMN_ID, "strftime('%s','now')");
         contentValues.put(REMINDER_COLUMN_TASK, task);
-        contentValues.put(REMINDER_COLUMN_COMPLETE, complete?"T":"F");
-        contentValues.put(REMINDER_COLUMN_REMIND, remind?"T":"F");
+        contentValues.put(REMINDER_COLUMN_COMPLETE, complete);
+        contentValues.put(REMINDER_COLUMN_REMIND, remind);
         contentValues.put(REMINDER_COLUMN_TIME, timeOfReminder);
         db.insert(REMINDER_TABLE_NAME, null, contentValues);
         return true;
     }
 
-    public boolean updateReminder(Integer id, String task, boolean complete, boolean remind,
-                                  int timeOfReminder) {
+    public boolean updateReminder(String id, String task, String complete, String remind,
+                                  String timeOfReminder) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(REMINDER_COLUMN_TASK, task);
-        contentValues.put(REMINDER_COLUMN_COMPLETE, complete?"T":"F");
-        contentValues.put(REMINDER_COLUMN_REMIND, remind?"T":"F");
+        contentValues.put(REMINDER_COLUMN_COMPLETE, complete);
+        contentValues.put(REMINDER_COLUMN_REMIND, remind);
         contentValues.put(REMINDER_COLUMN_TIME, timeOfReminder);
         db.update(REMINDER_TABLE_NAME, contentValues, REMINDER_COLUMN_ID + " = ? ",
-                new String[] { Integer.toString(id) } );
+                new String[] { id } );
         return true;
     }
 
-    public Cursor getReminder(int id) {
+    public Cursor getReminder(String id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery( "SELECT * FROM " + REMINDER_TABLE_NAME + " WHERE " +
-                REMINDER_COLUMN_ID + "=?", new String[] { Integer.toString(id) } );
+                REMINDER_COLUMN_ID + "=?", new String[] { id } );
         return res;
     }
 
@@ -79,9 +75,9 @@ public class ReminderDBHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    public Integer deleteReminder(Integer id) {
+    public Integer deleteReminder(String id) {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(REMINDER_TABLE_NAME, REMINDER_COLUMN_ID + " = ? ",
-                new String[] { Integer.toString(id) });
+                new String[] { id });
     }
 }

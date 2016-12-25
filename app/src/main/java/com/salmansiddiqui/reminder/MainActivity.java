@@ -1,7 +1,11 @@
 package com.salmansiddiqui.reminder;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,28 +17,60 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static String KEY_EXTRA_CONTACT_ID = "_id";
+    private ListView listView;
+    ReminderDBHelper dbHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        //fab.setImageDrawable(R.drawable.ic_add_circle_black_48dp);
-        /*fab.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void addItem(View view) {
-                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                //        .setAction("Action", null).show();
-                Intent intent = new Intent(this, AddItemActivity.class);
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, CreateOrEditActivity.class);
+                intent.putExtra(KEY_EXTRA_CONTACT_ID, Long.toString(System.currentTimeMillis()));
                 startActivity(intent);
             }
-        });*/
+        });
 
-    // Example of a call to a native method
-    TextView tv = (TextView) findViewById(R.id.sample_text);
-    tv.setText(stringFromJNI());
+        dbHelper = new ReminderDBHelper(this);
+
+        final Cursor cursor = dbHelper.getAllReminders();
+        String [] columns = new String[] {
+                ReminderDBHelper.REMINDER_COLUMN_ID,
+                ReminderDBHelper.REMINDER_COLUMN_TASK
+        };
+        int [] widgets = new int[] {
+                R.id.reminderID,
+                R.id.reminderTask
+        };
+
+        SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(this, R.layout.reminder_info,
+                cursor, columns, widgets, 0);
+        listView = (ListView)findViewById(R.id.listView1);
+        listView.setAdapter(cursorAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView listView, View view,
+                                    int position, long id) {
+                Cursor itemCursor = (Cursor) MainActivity.this.listView.getItemAtPosition(position);
+                int personID = itemCursor.getInt(itemCursor.getColumnIndex(ReminderDBHelper.REMINDER_COLUMN_ID));
+                Intent intent = new Intent(getApplicationContext(), CreateOrEditActivity.class);
+                intent.putExtra(KEY_EXTRA_CONTACT_ID, personID);
+                startActivity(intent);
+            }
+        });
+
+        /* Example of a call to a native method
+        TextView tv = (TextView) findViewById(R.id.sample_text);
+        tv.setText(stringFromJNI());*/
     }
 
     @Override
